@@ -1,0 +1,63 @@
+name: leave-system
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: leave-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-leavedb}
+      POSTGRES_USER: ${POSTGRES_USER:-leaveapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-this-local-password}
+    volumes:
+      - leave-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    networks: [leave-network]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leave-backend
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${POSTGRES_DB:-leavedb}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-leaveapp}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-change-this-local-password}
+      SPRING_DATASOURCE_DRIVER: org.postgresql.Driver
+      DDL_AUTO: update
+      H2_CONSOLE_ENABLED: "false"
+      CAMUNDA_CLIENT_REST_ADDRESS: ${CAMUNDA_REST_ADDRESS:-http://host.docker.internal:8080}
+      CAMUNDA_CLIENT_GRPC_ADDRESS: ${CAMUNDA_GRPC_ADDRESS:-http://host.docker.internal:26500}
+    ports:
+      - "8081:8081"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [leave-network]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: leave-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks: [leave-network]
+
+volumes:
+  leave-postgres-data:
+
+networks:
+  leave-network:
+    driver: bridge

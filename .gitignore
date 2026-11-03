@@ -1,0 +1,28 @@
+# Java / Maven
+**/target/
+**/data/
+*.log
+
+# Node
+**/node_modules/
+**/dist/
+.npm/
+
+# Local configuration and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Local Camunda distribution (download it separately)
+/camunda/distribution/
+/camunda/run/
+*.zip
+*.zip.sha256

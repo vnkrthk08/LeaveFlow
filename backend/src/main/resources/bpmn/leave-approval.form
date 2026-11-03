@@ -1,0 +1,20 @@
+{
+  "components": [
+    {
+      "label": "Approve this request",
+      "type": "checkbox",
+      "id": "Field_ApproveRequest",
+      "key": "approved",
+      "description": "Select this option to approve the leave request. Leave it unchecked to reject."
+    },
+    {
+      "label": "Comment",
+      "type": "textarea",
+      "id": "Field_ManagerComment",
+      "key": "managerComment",
+      "description": "Optional feedback for the employee."
+    }
+  ],
+  "type": "default",
+  "id": "leave-approval"
+}

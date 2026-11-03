@@ -1,0 +1,39 @@
+server:
+  port: ${SERVER_PORT:8081}
+  shutdown: graceful
+
+spring:
+  application:
+    name: leave-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./data/leavedb;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:true}
+      path: /h2-console
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+camunda:
+  client:
+    mode: self-managed
+    rest-address: ${CAMUNDA_CLIENT_REST_ADDRESS:http://localhost:8080}
+    grpc-address: ${CAMUNDA_CLIENT_GRPC_ADDRESS:http://localhost:26500}
+    prefer-rest-over-grpc: true
+    request-timeout: PT15S
+
+logging:
+  level:
+    com.example.leave: INFO
+    io.camunda.client: WARN
