@@ -17,6 +17,9 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Make wrapper executable
+        working-directory: backend
+        run: chmod +x mvnw
       - name: Verify backend
         working-directory: backend
         run: ./mvnw -B verify
